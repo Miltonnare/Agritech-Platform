@@ -91,17 +91,27 @@ REACT_APP_WEATHER_API_KEY=your_weather_api_key
 REACT_APP_MAPS_API_KEY=your_maps_api_key
 
 📁 Project Structure
-text
+
 src/
-├── components/           # Reusable UI components
-│   ├── common/           # Shared components like buttons, inputs
-│   ├── dashboard/        # Components specific to dashboard views
-│   └── layout/           # Header, footer, navigation
-├── context/              # React Context providers for state management
-├── pages/                # Page-level components (routes)
-├── services/             # API calls and external integrations
-├── types/                # TypeScript type definitions
-├── utils/                # Helper functions and utilities
+
+├── components/ 
+# Reusable UI components
+│   ├── common/   
+# Shared components like buttons, inputs
+│   ├── dashboard/ 
+# Components specific to dashboard views
+│   └── layout/ 
+# Header, footer, navigation
+├── context/ 
+# React Context providers for state management
+├── pages/ 
+# Page-level components (routes)
+├── services/
+# API calls and external integrations
+├── types/   
+# TypeScript type definitions
+├── utils/ 
+# Helper functions and utilities
 └── data/                 # Mock data and constants
 🔄 State Management
 AuthContext: Manages user authentication and profile state.
@@ -109,7 +119,9 @@ AuthContext: Manages user authentication and profile state.
 AppContext: Handles global app state including crop data, market info, notifications, and messaging.
 
 🛠️ Development Workflow
+
 Code Quality
+
 Written in TypeScript for type safety
 
 ESLint for linting and enforcing coding standards
@@ -119,12 +131,12 @@ Prettier for consistent code formatting
 Testing
 Run tests with:
 
-bash
+
 npm test
 Production Build
 Create optimized production build:
 
-bash
+
 npm run build
 🤝 Contributing
 We welcome contributions! Please follow these steps:
