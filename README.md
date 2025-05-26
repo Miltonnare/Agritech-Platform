@@ -1,4 +1,4 @@
-Kenyan Agricultural Dashboard
+# **AgriTech-Platform**
 
 A modern, React-based web application designed to empower Kenyan farmers by helping them manage crops, monitor real-time market prices, and connect directly with buyers. This platform leverages digital tools to improve agricultural management, increase market access, and boost farmer incomes.
 
