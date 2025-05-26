@@ -178,5 +178,5 @@ Email: miltonnareblessed@gmail.com
 
 MIT License
 
-Copyright (c) 2025 Kenyan Agricultural Dashboard
+Copyright (c) 2025 Agri-Tech Platform
 
