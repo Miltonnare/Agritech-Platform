@@ -9,6 +9,17 @@ import {
   messages 
 } from '../data/mockData';
 
+interface Crop {
+  id: string;
+  name: string;
+  variety: string;
+  quantity: number;
+  expectedHarvestDate?: string;
+  images?: string[];
+  description?: string;
+  unit?: string;
+}
+
 interface AppContextType {
   user: User | null;
   markets: Market[];
@@ -21,9 +32,12 @@ interface AppContextType {
   markNotificationAsRead: (id: string) => void;
   markMessageAsRead: (id: string) => void;
   addNewCrop: (crop: Omit<Crop, 'id' | 'farmerId'>) => void;
+  addCrop: (crop: Omit<Crop, 'id'>) => void;
+  updateCrop: (id: string, crop: Partial<Crop>) => void;
+  deleteCrop: (id: string) => void;
 }
 
-const AppContext = createContext<AppContextType | undefined>(undefined);
+const AppContext = createContext<AppContextType | null>(null);
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(currentUser);
@@ -66,22 +80,45 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
     setCropsList(prev => [...prev, newCrop]);
   };
 
+  const addCrop = (crop: Omit<Crop, 'id'>) => {
+    const newCrop = {
+      ...crop,
+      id: Date.now().toString()
+    };
+    setCropsList(prevCrops => [...prevCrops, newCrop]);
+  };
+
+  const updateCrop = (id: string, updatedCrop: Partial<Crop>) => {
+    setCropsList(prevCrops =>
+      prevCrops.map(crop =>
+        crop.id === id ? { ...crop, ...updatedCrop } : crop
+      )
+    );
+  };
+
+  const deleteCrop = (id: string) => {
+    setCropsList(prevCrops => prevCrops.filter(crop => crop.id !== id));
+  };
+
+  const value = {
+    user,
+    markets: marketsList,
+    crops: cropsList,
+    priceData: pricesList,
+    notifications: notificationsList,
+    unreadNotificationsCount,
+    messages: messagesList,
+    unreadMessagesCount,
+    markNotificationAsRead,
+    markMessageAsRead,
+    addNewCrop,
+    addCrop,
+    updateCrop,
+    deleteCrop
+  };
+
   return (
-    <AppContext.Provider
-      value={{
-        user,
-        markets: marketsList,
-        crops: cropsList,
-        priceData: pricesList,
-        notifications: notificationsList,
-        unreadNotificationsCount,
-        messages: messagesList,
-        unreadMessagesCount,
-        markNotificationAsRead,
-        markMessageAsRead,
-        addNewCrop,
-      }}
-    >
+    <AppContext.Provider value={value}>
       {children}
     </AppContext.Provider>
   );
@@ -89,8 +126,10 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
 export const useApp = () => {
   const context = useContext(AppContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useApp must be used within an AppProvider');
   }
   return context;
 };
+
+export default AppContext;

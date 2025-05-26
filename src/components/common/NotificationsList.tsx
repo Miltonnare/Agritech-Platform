@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 import { Bell, MessageSquare, TrendingUp, TrendingDown, ShoppingCart, X } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 
@@ -10,14 +11,40 @@ interface Toast {
   duration?: number;
 }
 
+interface PriceAlertNotification {
+  id: string;
+  type: 'price_alert';
+  direction: 'up' | 'down';
+  content: string;
+  title: string;
+  timestamp: string;
+  read: boolean;
+}
+
+interface OtherNotification {
+  id: string;
+  type: 'message' | 'order';
+  content: string;
+  title: string;
+  timestamp: string;
+  read: boolean;
+}
+
+type Notification = PriceAlertNotification | OtherNotification;
+
 const NotificationsList = () => {
   const { notifications, markNotificationAsRead } = useApp();
-  const [toasts, setToasts] = React.useState<Toast[]>([]);
+  const { user } = useAuth();
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
-  const getNotificationIcon = (type: string) => {
+  const getNotificationIcon = useCallback((type: Notification['type']) => {
     switch (type) {
-      case 'price_alert':
-        return type === 'up' ? <TrendingUp size={18} className="text-success-500" /> : <TrendingDown size={18} className="text-error-500" />;
+      case 'price_alert': {
+        const notification = notifications.find(n => n.type === 'price_alert') as PriceAlertNotification | undefined;
+        return notification?.direction === 'up'
+          ? <TrendingUp size={18} className="text-success-500" />
+          : <TrendingDown size={18} className="text-error-500" />;
+      }
       case 'message':
         return <MessageSquare size={18} className="text-secondary-500" />;
       case 'order':
@@ -25,22 +52,24 @@ const NotificationsList = () => {
       default:
         return <Bell size={18} className="text-gray-500" />;
     }
-  };
+  }, [notifications]);
 
-  const addToast = (toast: Toast) => {
+  const addToast = useCallback((toast: Toast) => {
     setToasts(prev => [...prev, toast]);
     if (toast.duration !== Infinity) {
       setTimeout(() => {
         removeToast(toast.id);
       }, toast.duration || 5000);
     }
-  };
+  }, []);
 
-  const removeToast = (id: string) => {
+  const removeToast = useCallback((id: string) => {
     setToasts(prev => prev.filter(toast => toast.id !== id));
-  };
+  }, []);
 
   useEffect(() => {
+    if (!user) return; // Don't process notifications if user is not authenticated
+    
     const unreadNotifications = notifications.filter(n => !n.read);
     unreadNotifications.forEach(notification => {
       addToast({
@@ -50,7 +79,10 @@ const NotificationsList = () => {
         duration: 5000
       });
     });
-  }, [notifications]);
+  }, [notifications, user, addToast]);
+
+  // If user is not authenticated, don't render anything
+  if (!user) return null;
 
   const unreadNotifications = notifications.filter(n => !n.read);
 
@@ -67,7 +99,7 @@ const NotificationsList = () => {
               'bg-white text-gray-800'}`}
         >
           <div className="flex items-center">
-            {getNotificationIcon(toast.type)}
+            {getNotificationIcon(toast.type as Notification['type'])}
             <span className="ml-2">{toast.message}</span>
           </div>
           <button
@@ -103,7 +135,7 @@ const NotificationsList = () => {
               >
                 <div className="flex items-start">
                   <div className="flex-shrink-0">
-                    {getNotificationIcon(notification.type)}
+                    {getNotificationIcon(notification.type as Notification['type'])}
                   </div>
                   <div className="ml-3 flex-grow">
                     <p className="text-sm font-medium text-gray-800">{notification.title}</p>
@@ -136,4 +168,4 @@ const NotificationsList = () => {
   );
 };
 
-export default NotificationsList;
+export default React.memo(NotificationsList);

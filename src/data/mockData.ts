@@ -35,7 +35,7 @@ export const crops: Crop[] = [
   },
   {
     id: 'c2',
-    name: 'Corn',
+    name: 'Maize',
     variety: 'Sweet Corn',
     quantity: 1200,
     unit: 'kg',
@@ -117,19 +117,166 @@ export const markets: Market[] = [
     contactPhone: '+1234567802',
     contactEmail: 'hello@riversidefarmers.com',
   },
+  {
+    id: 'm4',
+    name: 'Harvest Hub Wholesale',
+    type: 'wholesale',
+    location: {
+      address: '321 Distribution Center, Industrial Zone',
+      coordinates: {
+        latitude: 34.0480,
+        longitude: -118.2350,
+      },
+    },
+    distance: 5.8,
+    openingHours: {
+      open: '04:00',
+      close: '12:00',
+    },
+    contactPhone: '+1234567803',
+    contactEmail: 'sales@harvesthub.com',
+  },
+  {
+    id: 'm5',
+    name: 'Sunnybrook Farmers Cooperative',
+    type: 'cooperative',
+    location: {
+      address: '567 Valley View Rd, Sunnybrook',
+      coordinates: {
+        latitude: 34.0600,
+        longitude: -118.2480,
+      },
+    },
+    distance: 9.3,
+    openingHours: {
+      open: '07:30',
+      close: '16:30',
+    },
+    contactPhone: '+1234567804',
+    contactEmail: 'info@sunnybrookcoop.org',
+  },
+  {
+    id: 'm6',
+    name: 'Fresh Fields Market',
+    type: 'retail',
+    location: {
+      address: '890 Fresh Fields Lane, Meadowview',
+      coordinates: {
+        latitude: 34.0520,
+        longitude: -118.2520,
+      },
+    },
+    distance: 15.7,
+    openingHours: {
+      open: '09:00',
+      close: '18:00',
+    },
+    contactPhone: '+1234567805',
+    contactEmail: 'contact@freshfields.com',
+  },
+  {
+    id: 'm7',
+    name: 'Valley View Wholesale Center',
+    type: 'wholesale',
+    location: {
+      address: '432 Commerce Way, Valley View',
+      coordinates: {
+        latitude: 34.0510,
+        longitude: -118.2460,
+      },
+    },
+    distance: 4.6,
+    openingHours: {
+      open: '05:00',
+      close: '13:00',
+    },
+    contactPhone: '+1234567806',
+    contactEmail: 'orders@valleyviewwholesale.com',
+  },
+  {
+    id: 'm8',
+    name: 'Organic Growers Alliance',
+    type: 'cooperative',
+    location: {
+      address: '765 Organic Way, Greenfields',
+      coordinates: {
+        latitude: 34.0570,
+        longitude: -118.2430,
+      },
+    },
+    distance: 8.9,
+    openingHours: {
+      open: '08:00',
+      close: '16:00',
+    },
+    contactPhone: '+1234567807',
+    contactEmail: 'members@organicalliance.org',
+  },
+  {
+    id: 'm9',
+    name: 'Downtown Farmers Exchange',
+    type: 'retail',
+    location: {
+      address: '123 Main Street, Downtown',
+      coordinates: {
+        latitude: 34.0540,
+        longitude: -118.2470,
+      },
+    },
+    distance: 11.2,
+    openingHours: {
+      open: '07:00',
+      close: '19:00',
+    },
+    contactPhone: '+1234567808',
+    contactEmail: 'info@downtownexchange.com',
+  },
+  {
+    id: 'm10',
+    name: 'Rural Routes Market Hub',
+    type: 'wholesale',
+    location: {
+      address: '987 Rural Route, Outskirts',
+      coordinates: {
+        latitude: 34.0490,
+        longitude: -118.2510,
+      },
+    },
+    distance: 6.4,
+    openingHours: {
+      open: '04:30',
+      close: '11:30',
+    },
+    contactPhone: '+1234567809',
+    contactEmail: 'hub@ruralroutes.com',
+  }
 ];
 
 // Generate price data for the last 7 days
 export const generatePriceData = (): PriceData[] => {
   const priceData: PriceData[] = [];
   const crops = ['Tomatoes', 'Corn', 'Wheat', 'Potatoes', 'Lettuce'];
-  const markets = ['Farmville Central Market', 'Green Valley Cooperative', 'Riverside Farmers Market'];
+  const marketNames = markets.map(market => market.name);
   const units = ['kg', 'bushel', 'ton'];
   
   crops.forEach((crop, cropIndex) => {
-    markets.forEach((market, marketIndex) => {
-      // Base price different for each crop
+    marketNames.forEach((market, marketIndex) => {
+      // Base price different for each crop and market type
+      const marketType = markets[marketIndex].type;
       let basePrice = 1.5 + cropIndex * 0.8;
+      
+      // Adjust base price based on market type
+      switch (marketType) {
+        case 'wholesale':
+          basePrice *= 0.9; // Wholesale prices slightly lower
+          break;
+        case 'retail':
+          basePrice *= 1.2; // Retail prices higher
+          break;
+        case 'cooperative':
+          basePrice *= 1.1; // Cooperative prices moderately higher
+          break;
+      }
       
       // Generate prices for the last 7 days
       for (let i = 7; i >= 0; i--) {

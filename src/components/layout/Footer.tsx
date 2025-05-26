@@ -1,9 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Leaf, Phone, Mail, Instagram, Facebook, Twitter } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const Footer = () => {
+  const { user } = useAuth();
   const currentYear = new Date().getFullYear();
+
+  if (!user) {
+    return null;
+  }
 
   return (
     <footer className="bg-primary-500 text-white mt-auto">

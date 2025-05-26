@@ -1,9 +1,11 @@
-import React from 'react';
-import { MapPin, Building, Clock, Phone, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { MapPin, Building, Clock, Phone, ExternalLink, ChevronDown, ChevronUp } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 
 const NearbyMarkets = () => {
   const { markets } = useApp();
+  const initialDisplayCount = 4;
+  const [displayCount, setDisplayCount] = useState(initialDisplayCount);
   
   // Sort markets by distance
   const sortedMarkets = [...markets].sort((a, b) => (a.distance || 0) - (b.distance || 0));
@@ -34,8 +36,16 @@ const NearbyMarkets = () => {
     }
   };
 
+  const handleLoadMore = () => {
+    setDisplayCount(prev => Math.min(prev + 4, sortedMarkets.length));
+  };
+
+  const handleLoadLess = () => {
+    setDisplayCount(initialDisplayCount);
+  };
+
   return (
-    <div className="bg-white rounded-lg shadow-md p-5 animate-fade-in">
+    <div className="bg-white rounded-lg shadow-md p-5 animate-fade-in h-full">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold text-gray-800">Nearby Markets</h2>
         <a href="/markets" className="text-primary-500 hover:text-primary-600 text-sm">
@@ -43,8 +53,8 @@ const NearbyMarkets = () => {
         </a>
       </div>
 
-      <div className="space-y-4">
-        {sortedMarkets.map((market) => (
+      <div className="space-y-4 overflow-y-auto" style={{ maxHeight: 'calc(100% - 120px)' }}>
+        {sortedMarkets.slice(0, displayCount).map((market) => (
           <div 
             key={market.id}
             className="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow"
@@ -90,6 +100,27 @@ const NearbyMarkets = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="mt-4 flex justify-center space-x-3">
+        {displayCount > initialDisplayCount && (
+          <button
+            onClick={handleLoadLess}
+            className="inline-flex items-center px-4 py-2 text-sm text-secondary-500 hover:text-secondary-600 border border-secondary-500 rounded-md hover:bg-secondary-50 transition-colors"
+          >
+            <ChevronUp size={16} className="mr-1" />
+            Show Less
+          </button>
+        )}
+        {displayCount < sortedMarkets.length && (
+          <button
+            onClick={handleLoadMore}
+            className="inline-flex items-center px-4 py-2 text-sm text-primary-500 hover:text-primary-600 border border-primary-500 rounded-md hover:bg-primary-50 transition-colors"
+          >
+            <ChevronDown size={16} className="mr-1" />
+            Load More
+          </button>
+        )}
       </div>
     </div>
   );

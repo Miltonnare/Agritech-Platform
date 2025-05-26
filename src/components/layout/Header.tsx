@@ -1,12 +1,29 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Menu, Bell, MessageSquare, ChevronDown, User, LogOut, Leaf } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Menu, Bell, MessageSquare, ChevronDown, User, LogOut, Leaf, Store } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Header = () => {
-  const { user, unreadNotificationsCount, unreadMessagesCount } = useApp();
+  const { unreadNotificationsCount, unreadMessagesCount } = useApp();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+  // Don't show header if user is not authenticated
+  if (!user) {
+    return null;
+  }
 
   return (
     <header className="bg-primary-500 text-white shadow-md">
@@ -27,6 +44,10 @@ const Header = () => {
         <nav className="hidden md:flex items-center space-x-6">
           <Link to="/" className="py-2 hover:text-accent-300 transition-colors">Dashboard</Link>
           <Link to="/markets" className="py-2 hover:text-accent-300 transition-colors">Markets</Link>
+          <Link to="/market-connect" className="py-2 hover:text-accent-300 transition-colors flex items-center">
+            <Store size={18} className="mr-1" />
+            Market Connect
+          </Link>
           <Link to="/crops" className="py-2 hover:text-accent-300 transition-colors">My Crops</Link>
           <Link to="/weather" className="py-2 hover:text-accent-300 transition-colors">Weather</Link>
           <Link to="/messages" className="py-2 hover:text-accent-300 transition-colors">Messages</Link>
@@ -55,18 +76,10 @@ const Header = () => {
               className="flex items-center space-x-2"
               onClick={() => setIsProfileOpen(!isProfileOpen)}
             >
-              {user?.profileImage ? (
-                <img 
-                  src={user.profileImage} 
-                  alt={user.name} 
-                  className="h-8 w-8 rounded-full object-cover border-2 border-accent-300"
-                />
-              ) : (
-                <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center">
-                  <User size={18} />
-                </div>
-              )}
-              <span className="hidden md:block">{user?.name}</span>
+              <div className="h-8 w-8 rounded-full bg-primary-600 flex items-center justify-center">
+                <User size={18} />
+              </div>
+              <span className="hidden md:block">{user.email}</span>
               <ChevronDown size={16} />
             </button>
 
@@ -80,14 +93,16 @@ const Header = () => {
                   <User size={16} className="mr-2" />
                   Profile
                 </Link>
-                <Link 
-                  to="/logout" 
-                  className="block px-4 py-2 hover:bg-gray-100 flex items-center text-error-500"
-                  onClick={() => setIsProfileOpen(false)}
+                <button 
+                  onClick={() => {
+                    setIsProfileOpen(false);
+                    handleLogout();
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center text-error-500"
                 >
                   <LogOut size={16} className="mr-2" />
                   Logout
-                </Link>
+                </button>
               </div>
             )}
           </div>
@@ -111,6 +126,14 @@ const Header = () => {
               onClick={() => setIsMenuOpen(false)}
             >
               Markets
+            </Link>
+            <Link 
+              to="/market-connect" 
+              className="py-3 px-2 border-b border-primary-400 hover:bg-primary-700 transition-colors flex items-center"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Store size={18} className="mr-2" />
+              Market Connect
             </Link>
             <Link 
               to="/crops" 
