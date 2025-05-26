@@ -86,8 +86,11 @@ npm run dev
 
 🔐 Environment Variables
 Create a .env file with the following keys:
+
 REACT_APP_API_URL=your_api_url
+
 REACT_APP_WEATHER_API_KEY=your_weather_api_key
+
 REACT_APP_MAPS_API_KEY=your_maps_api_key
 
 ## 📁 Project Structure
@@ -108,7 +111,8 @@ src/
 
 ### 🔄 State Management
 
-- **AuthContext**: Manages user authentication and profile state.  
+- **AuthContext**: Manages user authentication and profile state.
+- 
 - **AppContext**: Handles global app state including crop data, market info, notifications, and messaging.
 
 
