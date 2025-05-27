@@ -1,13 +1,14 @@
 {
-  "name": "agrigrow-backend",
+  "name": "kenyan-agri-dashboard-api",
   "version": "1.0.0",
-  "description": "Backend API for AgriGrow platform",
-  "main": "dist/app.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "start": "node dist/app.js",
-    "dev": "ts-node-dev --respawn --transpile-only src/app.ts",
+    "start": "node dist/backend/server.js",
     "build": "tsc",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "postinstall": "npm run build"
   },
   "keywords": [],
   "author": "",
@@ -19,15 +20,15 @@
     "express": "^4.18.2",
     "express-validator": "^7.0.1",
     "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.3"
+    "mongoose": "^7.0.3",
+    "typescript": "^5.0.3"
   },
   "devDependencies": {
-    "@types/bcryptjs": "^2.4.2",
-    "@types/cors": "^2.8.13",
-    "@types/express": "^4.17.17",
-    "@types/jsonwebtoken": "^9.0.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.18",
+    "@types/express": "^4.17.22",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^18.15.11",
-    "ts-node-dev": "^2.0.0",
-    "typescript": "^5.0.4"
+    "ts-node-dev": "^2.0.0"
   }
 }
