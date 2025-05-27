@@ -169,8 +169,11 @@ Open a Pull Request for review.
 
 
 🚀 Deployment. 
+
 Link: agritechplatform.netlify.app
+
 🔧 Backend (Render)
+
 Create a Render Account: https://render.com
 
 Create a New Web Service:
