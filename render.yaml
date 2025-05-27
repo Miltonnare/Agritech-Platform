@@ -12,11 +12,23 @@ services:
         value: production
       - key: PORT
         value: 10000
-      - key: DATABASE_URL
+      - key: MONGODB_URI
         sync: false
       - key: JWT_SECRET
         sync: false
+      - key: JWT_REFRESH_SECRET
+        sync: false
       - key: CORS_ORIGIN
         value: https://your-app-name.netlify.app
+      - key: MONGODB_USERNAME
+        sync: false
+      - key: MONGODB_PASSWORD
+        sync: false
+      - key: MONGODB_HOST
+        sync: false
+      - key: MONGODB_PORT
+        sync: false
+      - key: MONGODB_DB
+        sync: false
     autoDeploy: true
     plan: starter 

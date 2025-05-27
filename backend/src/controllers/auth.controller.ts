@@ -100,10 +100,35 @@ export const signup = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error('Signup error:', error);
+    
+    // Check if it's a MongoDB error
+    const mongoError = error as any;
+    if (mongoError.code === 11000) {
+      return res.status(400).json({
+        message: 'Email already exists',
+        code: 'EMAIL_EXISTS'
+      });
+    }
+
+    // Check for database connection errors
+    if (mongoError.name === 'MongoError' || mongoError.name === 'MongooseError') {
+      return res.status(503).json({
+        message: 'Database connection error',
+        code: 'DB_ERROR',
+        ...(config.nodeEnv === 'development' && { 
+          error: getErrorMessage(error),
+          details: mongoError
+        })
+      });
+    }
+
     res.status(500).json({
       message: 'Error creating user',
       code: 'SERVER_ERROR',
-      ...(config.nodeEnv === 'development' && { error: getErrorMessage(error) })
+      ...(config.nodeEnv === 'development' && { 
+        error: getErrorMessage(error),
+        stack: mongoError.stack
+      })
     });
   }
 };
