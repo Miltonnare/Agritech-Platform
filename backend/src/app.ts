@@ -11,10 +11,17 @@ const app: Express = express();
 // CORS configuration
 const corsOptions: CorsOptions = {
   origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    const allowedOrigins = [process.env.CORS_ORIGIN || 'http://localhost:3000'];
-    if (!origin || allowedOrigins.includes(origin)) {
+    const allowedOrigins = [
+      process.env.CORS_ORIGIN || 'http://localhost:3000',
+      'https://agritechplatform.netlify.app',
+      'http://localhost:5173',
+      'http://localhost:5174'
+    ];
+    
+    if (!origin || allowedOrigins.some(allowed => allowed === origin)) {
       callback(null, true);
     } else {
+      console.log('CORS blocked origin:', origin);
       callback(new Error('Not allowed by CORS'));
     }
   },
