@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: Agritech-Platform-api
+    name: kenyan-agri-dashboard-api
     env: node
     region: frankfurt
-    buildCommand: npm install
+    buildCommand: npm install --production=false && npm run build
     startCommand: npm start
     healthCheckPath: /health
     envVars:
@@ -16,6 +16,6 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
-        value: https://agritechplatform.netlify.app/
+        value: https://your-app-name.netlify.app
     autoDeploy: true
     plan: starter 
