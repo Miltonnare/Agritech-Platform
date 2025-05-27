@@ -16,6 +16,6 @@ services:
       - key: JWT_SECRET
         sync: false
       - key: CORS_ORIGIN
-        value: https://your-app-name.netlify.app
+        value: agritechplatform.netlify.app
     autoDeploy: true
     plan: starter 

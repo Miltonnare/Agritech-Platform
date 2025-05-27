@@ -1,140 +1,62 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Express, Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
-import { config } from './config';
-import authRoutes from './routes/auth.routes';
+import cors, { CorsOptions } from 'cors';
+import dotenv from 'dotenv';
+import routes from './routes';
 
-// Create Express app
-const app = express();
+dotenv.config();
 
-// Middleware
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    if (config.nodeEnv === 'development') {
-      // In development, allow any localhost origin
-      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
-        return callback(null, true);
-      }
-    } else if (config.corsOrigins.includes(origin)) {
-      // In production, only allow configured origins
-      return callback(null, true);
+const app: Express = express();
+
+// CORS configuration
+const corsOptions: CorsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    const allowedOrigins = [process.env.CORS_ORIGIN || 'http://localhost:3000'];
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
     }
-    
-    callback(new Error(`Origin ${origin} not allowed by CORS`));
   },
   credentials: true,
-}));
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
+
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Routes
+app.use('/api', routes);
+
 // Health check endpoint
-app.get('/health', (req: Request, res: Response) => {
-  res.json({ 
-    status: 'ok', 
-    environment: config.nodeEnv,
-    mongodb: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({
+    status: 'healthy',
+    timestamp: new Date().toISOString(),
+    database: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected'
   });
 });
-
-// Routes
-app.use('/api/auth', authRoutes);
 
 // Error handling middleware
-interface ErrorWithStatus extends Error {
-  status?: number;
-  code?: string;
-}
-
-app.use((err: ErrorWithStatus, req: Request, res: Response, next: NextFunction) => {
-  console.error('Error:', {
-    message: err.message,
-    stack: config.nodeEnv === 'development' ? err.stack : undefined,
-    code: err.code,
-  });
-
-  res.status(err.status || 500).json({
-    message: err.message || 'Internal server error',
-    code: err.code || 'SERVER_ERROR',
-    ...(config.nodeEnv === 'development' && { stack: err.stack }),
+app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
+  console.error(err.stack);
+  res.status(500).json({
+    error: 'Internal Server Error',
+    message: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
 });
 
-// Handle 404 errors
-app.use((req: Request, res: Response) => {
-  res.status(404).json({
-    message: 'Route not found',
-    code: 'NOT_FOUND',
+// Database connection
+mongoose.connect(process.env.DATABASE_URL || 'mongodb://localhost:27017/agri-dashboard')
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
   });
-});
-
-// Database connection with retry logic
-const connectWithRetry = async (retries = 5, delay = 5000) => {
-  const mongooseOptions = {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 5000,
-    socketTimeoutMS: 45000,
-    family: 4, // Use IPv4, skip trying IPv6
-  };
-
-  for (let i = 0; i < retries; i++) {
-    try {
-      await mongoose.connect(config.mongodbUri, mongooseOptions);
-      console.log('Connected to MongoDB');
-      
-      // Log database events
-      mongoose.connection.on('error', (error) => {
-        console.error('MongoDB connection error:', error);
-      });
-
-      mongoose.connection.on('disconnected', () => {
-        console.log('MongoDB disconnected');
-      });
-
-      mongoose.connection.on('reconnected', () => {
-        console.log('MongoDB reconnected');
-      });
-
-      return;
-    } catch (error) {
-      console.error(`MongoDB connection attempt ${i + 1} failed:`, error);
-      if (i === retries - 1) throw error;
-      console.log(`Retrying in ${delay}ms...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-};
-
-// Start server
-const startServer = async () => {
-  try {
-    await connectWithRetry();
-    
-    app.listen(config.port, () => {
-      console.log(`Server is running on port ${config.port}`);
-      console.log(`Environment: ${config.nodeEnv}`);
-      console.log(`MongoDB URI: ${config.mongodbUri}`);
-    });
-  } catch (error) {
-    console.error('Failed to start server:', error);
-    process.exit(1);
-  }
-};
-
-// Handle uncaught errors
-process.on('uncaughtException', (error) => {
-  console.error('Uncaught Exception:', error);
-  process.exit(1);
-});
-
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled Rejection:', error);
-  process.exit(1);
-});
-
-startServer();
 
 export default app; 
