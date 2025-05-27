@@ -167,6 +167,76 @@ Open a Pull Request for review.
 <img width="941" alt="dfgh" src="https://github.com/user-attachments/assets/f09c1e13-8c9a-458c-b12d-208ea5ee15a5" />
 
 
+
+🚀 Deployment. 
+Link: agritechplatform.netlify.app
+🔧 Backend (Render)
+Create a Render Account: https://render.com
+
+Create a New Web Service:
+
+Connect your GitHub repo.
+
+Select your backend project folder.
+
+Set build command (if using TypeScript):
+
+bash
+Copy
+Edit
+npm install && npm run build
+Set start command:
+
+bash
+Copy
+Edit
+npm run start
+Set environment variables:
+
+PORT: 10000 or leave blank (Render auto-assigns)
+
+MONGODB_URI: (your MongoDB Atlas URI)
+
+CORS_ORIGIN: https://agritechplatform.netlify.app
+
+Auto Deploy: Enable auto-deploy from GitHub for continuous updates.
+
+🗄️ Database (MongoDB Atlas)
+Go to MongoDB Atlas
+
+Create a free cluster and a database user
+
+Whitelist 0.0.0.0/0 for public access (or Render IP only)
+
+Copy the Connection URI, and paste it into your .env and Render dashboard under MONGODB_URI
+
+🌐 Frontend (Netlify)
+Go to Netlify
+
+Connect your frontend repo (React/Vite/Next)
+
+Set build settings:
+
+Build command: npm run build
+
+Publish directory: dist (for Vite/React)
+
+Set environment variables:
+
+VITE_API_URL: https://<your-render-backend-url>/api
+
+Deploy and preview your frontend live at https://<your-site>.netlify.app
+
+✅ Final Checklist
+ Backend is reachable at https://your-render-app.onrender.com/api
+
+ Frontend is hosted at https://your-site.netlify.app
+
+ CORS settings include both local and Netlify frontend URLs
+
+ MongoDB Atlas is connected and open to backend IP or all (0.0.0.0/0 for development)
+
+
 📄 License
 This project is licensed under the MIT License. See the LICENSE file for details.
 
