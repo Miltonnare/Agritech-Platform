@@ -18,7 +18,8 @@ const corsOptions: CorsOptions = {
       'http://localhost:5174'
     ];
     
-    if (!origin || allowedOrigins.some(allowed => allowed === origin)) {
+    if (!origin || allowedOrigins.some(allowed => origin.startsWith(allowed))) {
+
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
@@ -31,6 +32,7 @@ const corsOptions: CorsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 // Middleware
 app.use(express.json());
