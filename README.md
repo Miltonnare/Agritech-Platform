@@ -2,9 +2,9 @@
 
 A modern, React-based web application designed to empower Kenyan farmers by helping them manage crops, monitor real-time market prices, and connect directly with buyers. This platform leverages digital tools to improve agricultural management, increase market access, and boost farmer incomes.
 
-🌟 Features
+🌟 ## Features
 
-🌾 Crop Management
+🌾 ## Crop Management
 
 Crop Tracking: Manage multiple crops with detailed data including variety, quantity, and growth stages.
 
