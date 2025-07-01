@@ -2,21 +2,21 @@
 
 A modern, React-based web application designed to empower Kenyan farmers by helping them manage crops, monitor real-time market prices, and connect directly with buyers. This platform leverages digital tools to improve agricultural management, increase market access, and boost farmer incomes.
 
-🌟 ## Features
+🌟  **Features**
 
-🌾 ## Crop Management
+🌾 ## **Crop Management**
 
-Crop Tracking: Manage multiple crops with detailed data including variety, quantity, and growth stages.
+**Crop Trackin**: Manage multiple crops with detailed data including variety, quantity, and growth stages.
 
-Harvest Predictions: Forecast harvest dates based on growth progress.
+**Harvest Predictions**: Forecast harvest dates based on growth progress.
 
-Interactive Dashboard: Visualize farm data with charts and summaries.
+**Interactive Dashboard**: Visualize farm data with charts and summaries.
 
-Crop Calendar: Plan and monitor planting and harvesting schedules.
+**Crop Calendar**: Plan and monitor planting and harvesting schedules.
 
 Image Upload: Attach photos to crop entries for better monitoring.
 
-🏪 Market Integration
+🏪 **Market Integration**
 
 Real-time Market Prices: Stay updated with current local market rates.
 
