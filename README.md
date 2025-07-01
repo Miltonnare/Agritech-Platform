@@ -4,7 +4,7 @@ A modern, React-based web application designed to empower Kenyan farmers by help
 
 🌟  **Features**
 
-🌾 # **Crop Management**
+# 🌾  **Crop Management**
 
 **Crop Trackin**: Manage multiple crops with detailed data including variety, quantity, and growth stages.
 
